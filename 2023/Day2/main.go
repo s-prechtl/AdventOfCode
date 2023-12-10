@@ -20,12 +20,18 @@ func main() {
 	}
 
 	games := strings.Split(string(content), "\n")
-    sum_of_possibles := 0
+    sum_of_powers := 0
 
     for _, game := range games {
-        possible := true
+        if game == "" {
+           continue
+        }
+        // possible := true
+        min_red := 0
+        min_blue := 0
+        min_green := 0
         game_info := strings.Split(strings.Replace(game, "Game ", "", 1), ":")
-        gameId, err := strconv.Atoi(game_info[0])
+        game_id, err := strconv.Atoi(game_info[0])
         if err != nil {
             continue
         }
@@ -37,7 +43,8 @@ func main() {
 
 
         for _, cube := range cubes {
-            amount, err := strconv.Atoi(strings.Split(strings.TrimSpace(cube), " ")[0])
+            cube = strings.TrimSpace(cube)
+            amount, err := strconv.Atoi(strings.Split(cube, " ")[0])
             if err != nil {
                 fmt.Println(cube, "heast")
                 continue
@@ -45,20 +52,23 @@ func main() {
 
             color := strings.Split(cube, " ")[1]
 
-            if color == "green" && amount > MAX_GREEN {
-                possible = false
-            } else if color == "red" && amount > MAX_RED {
-                possible = false
-            } else if amount > MAX_BLUE {
-                possible = false
+            if game_id == 3 {
+                fmt.Println(cube, amount, color)
+            }
+
+            if color == "green" {
+                min_green = max(amount, min_green)
+            } else if color == "red" {
+                min_red = max(amount, min_red)
+            } else {
+                min_blue = max(amount, min_blue)
             }
         }
+        fmt.Println(min_red, min_green, min_blue)
 
-        if possible == true {
-            sum_of_possibles += gameId
-        }
+        sum_of_powers += min_green * min_red * min_blue
     }
 
-    fmt.Println(sum_of_possibles)
+    fmt.Println(sum_of_powers)
 
 }
