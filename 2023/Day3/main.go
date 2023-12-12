@@ -44,6 +44,18 @@ func print_number_with_surronding(number string, y int, end_x int, lines []strin
 	fmt.Println()
 }
 
+func add_to_sum(number string, is_valid bool, sum_of_parts int) int {
+    if is_valid {
+        number, error := strconv.Atoi(number)
+        if error != nil {
+            fmt.Println("Error converting string to int")
+        }
+
+        sum_of_parts += number
+    }
+    return sum_of_parts
+}
+
 func main() {
 	content, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -55,31 +67,28 @@ func main() {
 
 	for y, line := range lines {
 		current_number_string := ""
-		current_number_is_vald := false
+		current_number_is_valid := false
 		for x, char := range line {
 			_, err := strconv.Atoi(string(char))
 			if err != nil {
 				if current_number_string != "" {
-					number, error := strconv.Atoi(current_number_string)
-					if error != nil {
-						fmt.Println("Error converting string to int")
-					}
-
-					if current_number_is_vald {
-						sum_of_parts += number
-                    }
-
+                    sum_of_parts = add_to_sum(current_number_string, current_number_is_valid, sum_of_parts)
 					current_number_string = ""
 
 				}
-				current_number_is_vald = false
+				current_number_is_valid = false
 				continue
 			}
 			current_number_string += string(char)
 
-			if !current_number_is_vald && is_adjacent_to_symbol(y, x, lines) {
-				current_number_is_vald = true
+			if !current_number_is_valid && is_adjacent_to_symbol(y, x, lines) {
+				current_number_is_valid = true
 			}
+
+            if x == len(line) - 1 {
+                sum_of_parts = add_to_sum(current_number_string, current_number_is_valid, sum_of_parts)
+            }
+
 		}
 	}
 
