@@ -17,6 +17,7 @@ int main() {
   int *first_numbers = malloc(lines * sizeof(int));
   int *second_numbers = malloc(lines * sizeof(int));
   int current_position = 0;
+  int count = 0;
   int sum = 0;
 
   file = fopen(filename, "r");
@@ -34,9 +35,9 @@ int main() {
         current_number_string[strlen(current_number_string) - 1] = '\0';
       }
       if (is_first) {
-	first_numbers[current_position] = atoi(current_number_string);
+        first_numbers[current_position] = atoi(current_number_string);
       } else {
-	second_numbers[current_position] = atoi(current_number_string);
+        second_numbers[current_position] = atoi(current_number_string);
       }
       is_first ^= 1;
       if (line) {
@@ -47,10 +48,17 @@ int main() {
   }
   qsort(first_numbers, lines, sizeof(int), compare_ints);
   qsort(second_numbers, lines, sizeof(int), compare_ints);
-  
+
   for (int i = 0; i < lines; i++) {
-	int difference = abs(first_numbers[i] - second_numbers[i]);
-	sum += difference;
+    for (int j = 0; j < lines; j++) {
+      if (first_numbers[i] == second_numbers[j]) {
+        count++;
+      } else if (count != 0) {
+	sum += first_numbers[i] * count;
+	count = 0;
+	break;
+      }
+    }
   }
 
   printf("%d\n", sum);
@@ -80,5 +88,5 @@ int count_lines(char *filename) {
 }
 
 int compare_ints(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+  return (*(int *)a - *(int *)b);
 }
