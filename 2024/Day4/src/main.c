@@ -114,7 +114,7 @@ int diagonal_rtl(char *word_search) {
 
 int diagonal_ltr(char *word_search) {
     int count = 0;
-    for (int row = 0; (row + 3) <= ROWS; row++) {
+    for (int row = 0; (row + 3) < ROWS; row++) {
         for (int col = COLS; (col - 3) >= 0; col--) {
             if (*get_char(word_search, row, col) == 'X' &&
                 *get_char(word_search, row + 1, col - 1) == 'M' &&
