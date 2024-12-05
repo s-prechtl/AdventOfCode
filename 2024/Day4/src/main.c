@@ -114,18 +114,18 @@ int diagonal_rtl(char *word_search) {
 
 int diagonal_ltr(char *word_search) {
     int count = 0;
-    for (int row = ROWS; (row - 3) >= 0; row--) {
+    for (int row = 0; (row + 3) <= ROWS; row++) {
         for (int col = COLS; (col - 3) >= 0; col--) {
             if (*get_char(word_search, row, col) == 'X' &&
-                *get_char(word_search, row - 1, col - 1) == 'M' &&
-                *get_char(word_search, row - 2, col - 2) == 'A' &&
-                *get_char(word_search, row - 3, col - 3) == 'S') {
+                *get_char(word_search, row + 1, col - 1) == 'M' &&
+                *get_char(word_search, row + 2, col - 2) == 'A' &&
+                *get_char(word_search, row + 3, col - 3) == 'S') {
 
                 count++;
             } else if (*get_char(word_search, row, col) == 'S' &&
-                       *get_char(word_search, row - 1, col - 1) == 'A' &&
-                       *get_char(word_search, row - 2, col - 2) == 'M' &&
-                       *get_char(word_search, row - 3, col - 3) == 'X') {
+                       *get_char(word_search, row + 1, col - 1) == 'A' &&
+                       *get_char(word_search, row + 2, col - 2) == 'M' &&
+                       *get_char(word_search, row + 3, col - 3) == 'X') {
 
                 count++;
             }
