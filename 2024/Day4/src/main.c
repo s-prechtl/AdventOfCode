@@ -6,6 +6,10 @@ int get_rows(const char *filename);
 char *get_char(char *word_search, int row, int col);
 void init_word_search(char *word_search, const char *filename);
 void print_field(char *word_search);
+int horizontal(char *word_search);
+int vertical(char *word_search);
+int diagonal_rtl(char *word_search);
+int diagonal_ltr(char *word_search);
 
 int ROWS;
 int COLS;
@@ -17,7 +21,10 @@ int main(void) {
     char *word_search = malloc(ROWS * COLS * sizeof(char));
 
     init_word_search(word_search, filename);
-    print_field(word_search);
+    printf(
+        "%d\n", vertical(word_search) + horizontal(word_search) + diagonal_ltr(word_search) +
+                    diagonal_rtl(word_search)
+    );
 
     return 0;
 }
@@ -39,6 +46,94 @@ int get_line_length(const char *filename) {
     return length;
 }
 
+int horizontal(char *word_search) {
+    int count = 0;
+    for (int row = 0; row < ROWS; row++) {
+        for (int col = 0; (col + 3) < COLS; col++) {
+            if (*get_char(word_search, row, col) == 'X' &&
+                *get_char(word_search, row, col + 1) == 'M' &&
+                *get_char(word_search, row, col + 2) == 'A' &&
+                *get_char(word_search, row, col + 3) == 'S') {
+
+                count++;
+            } else if (*get_char(word_search, row, col) == 'S' &&
+                       *get_char(word_search, row, col + 1) == 'A' &&
+                       *get_char(word_search, row, col + 2) == 'M' &&
+                       *get_char(word_search, row, col + 3) == 'X') {
+
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int vertical(char *word_search) {
+    int count = 0;
+    for (int row = 0; (row + 3) < ROWS; row++) {
+        for (int col = 0; col < COLS; col++) {
+            if (*get_char(word_search, row, col) == 'X' &&
+                *get_char(word_search, row + 1, col) == 'M' &&
+                *get_char(word_search, row + 2, col) == 'A' &&
+                *get_char(word_search, row + 3, col) == 'S') {
+
+                count++;
+            } else if (*get_char(word_search, row, col) == 'S' &&
+                       *get_char(word_search, row + 1, col) == 'A' &&
+                       *get_char(word_search, row + 2, col) == 'M' &&
+                       *get_char(word_search, row + 3, col) == 'X') {
+
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int diagonal_rtl(char *word_search) {
+    int count = 0;
+    for (int row = 0; (row + 3) < ROWS; row++) {
+        for (int col = 0; (col + 3) < COLS; col++) {
+            if (*get_char(word_search, row, col) == 'X' &&
+                *get_char(word_search, row + 1, col + 1) == 'M' &&
+                *get_char(word_search, row + 2, col + 2) == 'A' &&
+                *get_char(word_search, row + 3, col + 3) == 'S') {
+
+                count++;
+            } else if (*get_char(word_search, row, col) == 'S' &&
+                       *get_char(word_search, row + 1, col + 1) == 'A' &&
+                       *get_char(word_search, row + 2, col + 2) == 'M' &&
+                       *get_char(word_search, row + 3, col + 3) == 'X') {
+
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int diagonal_ltr(char *word_search) {
+    int count = 0;
+    for (int row = ROWS; (row - 3) >= 0; row--) {
+        for (int col = COLS; (col - 3) >= 0; col--) {
+            if (*get_char(word_search, row, col) == 'X' &&
+                *get_char(word_search, row - 1, col - 1) == 'M' &&
+                *get_char(word_search, row - 2, col - 2) == 'A' &&
+                *get_char(word_search, row - 3, col - 3) == 'S') {
+
+                count++;
+            } else if (*get_char(word_search, row, col) == 'S' &&
+                       *get_char(word_search, row - 1, col - 1) == 'A' &&
+                       *get_char(word_search, row - 2, col - 2) == 'M' &&
+                       *get_char(word_search, row - 3, col - 3) == 'X') {
+
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 int get_rows(const char *filename) {
     int rows = 0;
     FILE *file = fopen(filename, "r");
@@ -58,7 +153,7 @@ int get_rows(const char *filename) {
     return rows;
 }
 
-char *get_char(char *word_search, int row, int col) { return &word_search[row * ROWS + col]; }
+char *get_char(char *word_search, int row, int col) { return &word_search[row * COLS + col]; }
 
 void print_field(char *word_search) {
     for (int row = 0; row < ROWS; row++) {
@@ -78,7 +173,7 @@ void init_word_search(char *word_search, const char *filename) {
         exit(1);
     }
 
-    while (fgets(buffer, COLS+2, file)) {
+    while (fgets(buffer, COLS + 2, file)) {
         for (int i = 0; i < COLS; i++) {
             if (buffer[i] != '\n' && buffer[i] != '\0' && buffer[i] != '\r') {
                 *get_char(word_search, current_row, i) = buffer[i];
