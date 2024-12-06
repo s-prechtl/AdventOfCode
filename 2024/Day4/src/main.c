@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int get_line_length(const char *filename);
 int get_rows(const char *filename);
@@ -10,6 +11,9 @@ int horizontal(char *word_search);
 int vertical(char *word_search);
 int diagonal_rtl(char *word_search);
 int diagonal_ltr(char *word_search);
+int count_mas(char *word_search);
+char *get_surrounding_xmas(char *word_search, int row, int col);
+int is_valid_surrounding(char *surrounding);
 
 int ROWS;
 int COLS;
@@ -22,10 +26,12 @@ int main(void) {
 
     init_word_search(word_search, filename);
     printf(
-        "%d\n", vertical(word_search) + horizontal(word_search) + diagonal_ltr(word_search) +
-                    diagonal_rtl(word_search)
+        "Part 1: %d\n", vertical(word_search) + horizontal(word_search) +
+                            diagonal_ltr(word_search) + diagonal_rtl(word_search)
     );
+    printf("Part 2: %d\n", count_mas(word_search));
 
+    free(word_search);
     return 0;
 }
 
@@ -45,6 +51,51 @@ int get_line_length(const char *filename) {
     fclose(file);
     return length;
 }
+
+int count_mas(char *word_search) {
+    int count = 0;
+    for (int row = 1; (row + 1) < ROWS; row++) {
+        for (int col = 1; (col + 1) < COLS; col++) {
+            if (*get_char(word_search, row, col) == 'A') {
+                char *surrounding = get_surrounding_xmas(word_search, row, col);
+
+                count += is_valid_surrounding(surrounding);
+
+                free(surrounding);
+            }
+        }
+    }
+    return count;
+}
+
+char *get_surrounding_xmas(char *word_search, int row, int col) {
+    char *surrounding = malloc(4 * sizeof(char));
+    surrounding[0] = *get_char(word_search, row - 1, col - 1); // top left
+    surrounding[1] = *get_char(word_search, row - 1, col + 1); // top right
+    surrounding[2] = *get_char(word_search, row + 1, col - 1); // bottom left
+    surrounding[3] = *get_char(word_search, row + 1, col + 1); // bottom right
+    return surrounding;
+}
+
+int is_valid_surrounding(char *surrounding) {
+    if (strcmp(surrounding, "MMSS") == 0) {
+        return 1;
+    }
+
+    if (strcmp(surrounding, "MSMS") == 0) {
+        return 1;
+    }
+
+    if (strcmp(surrounding, "SSMM") == 0) {
+        return 1;
+    }
+
+    if (strcmp(surrounding, "SMSM") == 0) {
+        return 1;
+    }
+    return 0;
+}
+
 
 int horizontal(char *word_search) {
     int count = 0;
