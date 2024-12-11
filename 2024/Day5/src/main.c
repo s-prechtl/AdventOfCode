@@ -132,6 +132,7 @@ void read_updates_from_file(int ***updates, const char *filename) {
         if (!is_updates) {
             continue;
         }
+
         char **tokens = str_split(buffer, ',');
         int *values = NULL;
         if (arrlen(tokens) > 0) {
@@ -142,7 +143,9 @@ void read_updates_from_file(int ***updates, const char *filename) {
                 arrput(*updates, values);
             }
         }
+        free(tokens);
     }
+    free(buffer);
 }
 
 void read_por_from_file(PageOrderingRules **pageOrderingRules, const char *filename) {
@@ -169,8 +172,8 @@ void read_por_from_file(PageOrderingRules **pageOrderingRules, const char *filen
             arrput(current_values, value);
             hmput(*pageOrderingRules, key, current_values);
         }
+        free(tokens);
     }
-
     free(buffer);
 }
 
