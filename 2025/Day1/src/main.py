@@ -9,13 +9,15 @@ if __name__ == '__main__':
 
     for rotation in rotations:
         print(rotation)
-        # Convert left to right to avoid negatives
-        if rotation["direction"] == 'L':
-            rotation["count"] = TOTAL_CLICKS - rotation["count"]
+        if rotation['direction'] == 'L':
+            direction = -1
+        else:
+            direction = 1
 
-        current = (current + rotation["count"]) % TOTAL_CLICKS
+        for _ in range(rotation['count']):
+            current = (current + direction) % TOTAL_CLICKS
 
-        if current == 0:
-            count += 1
+            if current == 0:
+                count += 1
 
     print(count)
