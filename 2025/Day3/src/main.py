@@ -1,28 +1,36 @@
-def get_max_joltage(batteries: [str], last_index: int = -1) -> (int, int):
-    max = 0
-    max_index = -1
-    last_is_last = last_index == (len(batteries)-1)
-    for i, battery in enumerate(batteries):
-        battery_value = int(battery)
-        if battery_value > max and ((last_is_last and i != last_index) or i > last_index):
-            max = battery_value
-            max_index = i
+def get_largest_n_digit(batteries: str, n: int) -> str:
+    digits = [c for c in batteries if c.isdigit()]
 
-    return max_index, max
+    to_remove = len(digits) - n
+    result = digits[:]
+
+    for _ in range(to_remove):
+        for i in range(len(result) - 1):
+            if result[i] < result[i + 1]:
+                result.pop(i)
+                break
+        else:
+            result.pop()
+
+    return ''.join(result)
 
 
 if __name__ == '__main__':
     with open("input.txt", "r") as f:
         banks = f.read().split('\n')
 
-    total_joltage = 0
+    part1_total = 0
+    part2_total = 0
+
     for batteries in banks:
-        f_i, first_max = get_max_joltage(batteries)
-        s_i, second_max = get_max_joltage(batteries, f_i)
+        if not batteries:
+            continue
 
-        if f_i == len(batteries)-1:
-            first_max, second_max = second_max, first_max
+        # part1_total += int((str(first_max)+str(second_max)))
+        part1_total += int(get_largest_n_digit(batteries, 2))
 
-        total_joltage += int((str(first_max)+str(second_max)))
+        # Part 2: largest 12 digits
+        part2_total += int(get_largest_n_digit(batteries, 12))
 
-    print(total_joltage)
+    print(f"Part 1: {part1_total}")
+    print(f"Part 2: {part2_total}")
